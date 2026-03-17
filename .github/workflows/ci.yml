@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON files
+        run: |
+          for f in $(find . -name "*.json" -not -path "./node_modules/*"); do
+            echo "Checking $f"
+            python3 -m json.tool "$f" > /dev/null
+          done
+
+      - name: Check for debug statements
+        run: |
+          if grep -rn "console.log\|debugger" --include="*.js" --include="*.html" . 2>/dev/null; then
+            echo "WARNING: Debug statements found"
+          else
+            echo "Clean"
+          fi
+
+      - name: Check for large files
+        run: find . -size +1M -not -path "./.git/*" | head -5
