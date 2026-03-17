@@ -1,0 +1,18 @@
+#!/bin/bash
+  echo "Running pre-commit checks..."
+
+  FLAGGED=$(git diff --cached --name-only | grep -v "^\.githooks/" | xargs grep -l
+  "console\.log\|debugger" 2>/dev/null)
+  if [ -n "$FLAGGED" ]; then
+      echo "BLOCKED: Remove console.log/debugger statements"
+      echo "$FLAGGED"
+      exit 1
+  fi
+
+  if git diff --cached -- . ':!.githooks' | grep -iE
+  "(password\s*=|api_key\s*=|secret\s*=)" 2>/dev/null; then
+      echo "BLOCKED: Possible hardcoded secret detected"
+      exit 1
+  fi
+
+  echo "All checks passed!"
