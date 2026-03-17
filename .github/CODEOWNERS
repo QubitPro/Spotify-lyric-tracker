@@ -1,0 +1,11 @@
+# Default owner
+  *               @QubitPro
+
+  # GitHub config
+  .github/        @QubitPro
+
+  # Styles
+  *.css           @QubitPro
+
+  # Scripts
+  *.js            @QubitPro
